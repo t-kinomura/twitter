@@ -42,8 +42,9 @@ driver.find_element(:xpath, "//*[@id='export']/button").click
 sleep 1
 driver.find_element(:xpath, "//*[@id='export']/ul/li[1]/button").click
 
-sleep 30
+sleep 20
 
+# tweet_activity_metrics配下のファイルを取得
 file_name = ''
 Dir.foreach('tweet_activity_metrics') do |item|
   next unless item.include?('.csv')
@@ -77,11 +78,14 @@ value_arrays.map! do |value_array|
     end
 end
 
-# UTCからJSTに変換
+# UTCをJSTに変換
+# ハッシュタグを抜きだす
+# テキストの長さを調整
 value_arrays.map do |each_array|
   each_array['time'] = ActiveSupport::TimeZone.new('Tokyo')
                                               .parse(each_array['time'])
                                               .to_s
+  each_array['hash tag'] = each_array['Tweet text'][/#.*\s/]
   each_array['Tweet text'] = each_array['Tweet text'].truncate(20)
 end
 
@@ -101,4 +105,5 @@ sheets.update_cells(rows.length + 1, 1, values)
 # シートの保存
 sheets.save
 
+# ファイルを削除
 FileUtils.rm(file_name)
