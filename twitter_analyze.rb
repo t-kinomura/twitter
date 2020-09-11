@@ -102,7 +102,6 @@ rows = sheets.rows
 # スプレッドシートへの書き込み
 sheets.update_cells(rows.length + 1, 1, values)
 
-# シートの保存
 sheets.save
 
 # ファイルを削除
